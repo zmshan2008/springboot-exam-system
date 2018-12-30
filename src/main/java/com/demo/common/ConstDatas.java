@@ -27,7 +27,7 @@ public class ConstDatas {
     public static final int commentPageSize = 16;
 
     //MD5加盐
-    public static final String MD5_SALT = "qexz";
+    public static final String MD5_SALT = "demo";
     //分页数据
     public final static String DATA = "data";
 
