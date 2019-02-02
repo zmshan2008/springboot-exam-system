@@ -27,7 +27,7 @@
     </sql>
 
     <insert id="insertQuestion" parameterType="com.demo.model.Question" >
-        insert into t_penguin_question
+        insert into  question
         (title, content, question_type, option_a, option_b, option_c,
         option_d, answer, parse, subject_id, contest_id, score, difficulty,
         state)
@@ -38,12 +38,12 @@
     </insert>
 
     <delete id="deleteQuestion" parameterType="int">
-        DELETE FROM t_penguin_question
+        DELETE FROM  question
         where id = #{id}
     </delete>
 
     <update id="updateQuestionById" parameterType="com.demo.model.Question">
-        UPDATE t_penguin_question
+        UPDATE  question
         SET
           title = #{question.title}, content = #{question.content},
           question_type = #{question.questionType}, option_a = #{question.optionA},
@@ -59,14 +59,14 @@
     <select id="getQuestionById" resultMap="BaseResultMap" parameterType="int" >
         SELECT
         *
-        FROM t_penguin_question
+        FROM  question
         WHERE id = #{id}
     </select>
 
     <select id="getCountByContent" resultType="int">
         SELECT
           COUNT(1)
-        FROM t_penguin_question
+        FROM  question
         WHERE 1 = 1 AND state = 1
         <if test="content != null and content != ''">
             AND content LIKE CONCAT(CONCAT('%', #{content}), '%')
@@ -76,7 +76,7 @@
     <select id="getQuestionsByContent" resultMap="BaseResultMap" >
         SELECT
         *
-        FROM t_penguin_question
+        FROM  question
         WHERE 1 = 1 AND state = 1
         <if test="content != null and content != ''">
             AND content LIKE CONCAT(CONCAT('%', #{content}), '%')
@@ -86,7 +86,7 @@
     <select id="getQuestionByContestId" resultMap="BaseResultMap" >
         SELECT
         *
-        FROM t_penguin_question
+        FROM  question
         WHERE
         contest_id = #{contestId}
     </select>
@@ -94,7 +94,7 @@
     <select id="getCountByProblemsetIdAndContentAndDiffculty" resultType="int">
         SELECT
         COUNT(1)
-        FROM t_penguin_question
+        FROM  question
         WHERE state = 1 AND subject_id = #{problemsetId}
         <if test="content != null and content != ''">
             AND content LIKE CONCAT(CONCAT('%', #{content}), '%')
@@ -107,7 +107,7 @@
     <select id="getQuestionsByProblemsetIdAndContentAndDiffculty" resultMap="BaseResultMap">
         SELECT
         *
-        FROM t_penguin_question
+        FROM  question
         WHERE state = 1 AND subject_id = #{problemsetId}
         <if test="content != null and content != ''">
             AND content LIKE CONCAT(CONCAT('%', #{content}), '%')
@@ -118,7 +118,7 @@
     </select>
 
     <update id="updateQuestionsStateByContestId">
-        UPDATE t_penguin_question
+        UPDATE  question
         SET
           state = #{state}
         WHERE

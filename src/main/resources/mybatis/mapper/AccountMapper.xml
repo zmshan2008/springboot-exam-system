@@ -20,7 +20,7 @@
     </sql>
 
     <insert id="insertAccount" parameterType="com.demo.model.Account" >
-        insert into t_penguin_account
+        insert into  account
         (name, username, password, qq, phone, email, description,
         avatar_img_url, level)
         values (#{account.name}, #{account.username}, #{account.password},
@@ -29,7 +29,7 @@
     </insert>
 
     <update id="updateAccountById" parameterType="com.demo.model.Account">
-        UPDATE t_penguin_account
+        UPDATE  account
         SET
         password = #{account.password}, qq = #{account.qq}, phone = #{account.phone},
         email = #{account.email}, description = #{account.description},
@@ -39,7 +39,7 @@
     </update>
 
     <update id="updateAvatarImgUrlById">
-        UPDATE t_penguin_account
+        UPDATE  account
         SET
         avatar_img_url = #{avatarImgUrl}
         WHERE
@@ -50,14 +50,14 @@
     <select id="getAccountByUsername" resultMap="BaseResultMap" parameterType="String" >
         select
         <include refid="Base_Column_List" />
-        from t_penguin_account
+        from  account
         where username = #{username}
     </select>
 
     <select id="getAccountsByIds" resultMap="BaseResultMap">
         SELECT
          *
-        FROM t_penguin_account
+        FROM  account
         WHERE 1 = 1
         <if test="studentIds != null and studentIds.size > 0">
             AND id IN
@@ -70,23 +70,23 @@
     <select id="getCount" resultType="int">
         SELECT
         COUNT(1)
-        FROM t_penguin_account
+        FROM  account
     </select>
 
     <select id="getAccounts" resultMap="BaseResultMap" >
         SELECT
         *
-        FROM t_penguin_account
+        FROM  account
         ORDER BY create_time DESC
     </select>
 
     <delete id="deleteAccount" parameterType="int" >
-        delete from t_penguin_account
+        delete from  account
         where id = #{id}
     </delete>
 
     <update id="updateState" >
-        update t_penguin_account set
+        update  account set
         state = #{state}
         where id = #{id}
     </update>
@@ -94,7 +94,7 @@
     <select id="getAccountsByIdSets" resultMap="BaseResultMap">
         SELECT
         *
-        FROM t_penguin_account
+        FROM  account
         WHERE 1 = 1
         <if test="ids != null and ids.size > 0">
             AND id IN
@@ -108,7 +108,7 @@
     <select id="getAccountById" resultMap="BaseResultMap" parameterType="int" >
         select
         *
-        from t_penguin_account
+        from  account
         where id = #{id}
     </select>
 

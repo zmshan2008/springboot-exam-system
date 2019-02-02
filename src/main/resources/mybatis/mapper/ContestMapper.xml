@@ -17,19 +17,19 @@
     </sql>
 
     <insert id="insertContest" parameterType="com.demo.model.Contest" >
-        insert into t_penguin_contest
+        insert into  contest
         (title, total_score, subject_id, start_time, end_time, state)
         values (#{contest.title}, #{contest.totalScore}, #{contest.subjectId},
         #{contest.startTime}, #{contest.endTime}, #{contest.state})
     </insert>
 
     <delete id="deleteContest" parameterType="int">
-        DELETE FROM t_penguin_contest
+        DELETE FROM  contest
         where id = #{id}
     </delete>
 
     <update id="updateContestById" parameterType="com.demo.model.Contest">
-        UPDATE t_penguin_contest
+        UPDATE  contest
         SET
         title = #{contest.title}, total_score = #{contest.totalScore},
         subject_id = #{contest.subjectId}, start_time = #{contest.startTime},
@@ -41,25 +41,25 @@
     <select id="getContestById" resultMap="BaseResultMap" parameterType="int" >
         SELECT
         *
-        FROM t_penguin_contest
+        FROM  contest
         WHERE id = #{id}
     </select>
 
     <select id="getCount" resultType="int">
         SELECT
         COUNT(1)
-        FROM t_penguin_contest
+        FROM  contest
     </select>
 
     <select id="getContests" resultMap="BaseResultMap" >
         SELECT
         *
-        FROM t_penguin_contest
+        FROM  contest
         ORDER BY start_time DESC
     </select>
 
     <update id="updateStateToStart">
-        UPDATE t_penguin_contest
+        UPDATE  contest
         SET
           state = 1
         WHERE
@@ -67,7 +67,7 @@
     </update>
 
     <update id="updateStateToEnd">
-        UPDATE t_penguin_contest
+        UPDATE  contest
         SET
           state = 2
         WHERE
@@ -77,7 +77,7 @@
     <select id="getContestsByContestIds" resultMap="BaseResultMap">
         SELECT
         *
-        FROM t_penguin_contest
+        FROM  contest
         WHERE 1 = 1
         <if test="contestIds != null and contestIds.size > 0">
             AND id IN

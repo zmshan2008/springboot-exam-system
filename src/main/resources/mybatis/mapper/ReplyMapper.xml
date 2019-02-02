@@ -15,7 +15,7 @@
     </sql>
 
     <insert id="insertReply" parameterType="com.demo.model.Reply" >
-        insert into t_penguin_reply
+        insert into  reply
         (user_id, atuser_id, post_id, comment_id, content)
         values (#{reply.userId}, #{reply.atuserId},
         #{reply.postId}, #{reply.commentId}, #{reply.content})
@@ -24,7 +24,7 @@
     <select id="getReliesByPostId" resultMap="BaseResultMap" >
         SELECT
         *
-        FROM t_penguin_reply
+        FROM  reply
         WHERE post_id = #{postId}
         ORDER BY create_time ASC
     </select>

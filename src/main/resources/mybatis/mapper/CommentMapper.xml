@@ -13,7 +13,7 @@
     </sql>
 
     <insert id="insertComment" parameterType="com.demo.model.Comment" >
-        insert into t_penguin_comment
+        insert into  comment
         (user_id, post_id, content)
         values (#{comment.userId}, #{comment.postId}, #{comment.content})
     </insert>
@@ -21,7 +21,7 @@
     <select id="getCommentsByPostId" resultMap="BaseResultMap" >
         SELECT
         *
-        FROM t_penguin_comment
+        FROM  comment
         WHERE post_id = #{postId}
         ORDER BY create_time ASC
     </select>
@@ -29,18 +29,18 @@
     <select id="getCount" resultType="int">
         SELECT
         COUNT(1)
-        FROM t_penguin_comment
+        FROM  comment
     </select>
 
     <select id="getComments" resultMap="BaseResultMap">
         SELECT
         *
-        FROM t_penguin_comment
+        FROM  comment
         ORDER BY create_time ASC
     </select>
 
     <delete id="deleteCommentById" parameterType="int" >
-        delete from t_penguin_comment
+        delete from  comment
         where id = #{id}
     </delete>
 </mapper>

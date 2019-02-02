@@ -15,13 +15,13 @@
     </sql>
 
     <insert id="insertSubject" parameterType="com.demo.model.Subject" >
-        insert into t_penguin_subject
+        insert into  subject
         (name, question_num, img_url)
         values (#{subject.name}, #{subject.questionNum}, #{subject.imgUrl})
     </insert>
 
     <update id="updateSubjectById" parameterType="com.demo.model.Subject">
-        UPDATE t_penguin_subject
+        UPDATE  subject
         SET
         name = #{subject.name}, question_num = #{subject.questionNum},
         img_url = #{subject.imgUrl}
@@ -32,24 +32,24 @@
     <select id="getSubjectById" resultMap="BaseResultMap" parameterType="int" >
         SELECT
         *
-        FROM t_penguin_subject
+        FROM  subject
         WHERE id = #{id}
     </select>
 
     <select id="getCount" resultType="int">
         SELECT
         COUNT(1)
-        FROM t_penguin_subject
+        FROM  subject
     </select>
 
     <select id="getSubjects" resultMap="BaseResultMap" >
         SELECT
         *
-        FROM t_penguin_subject
+        FROM  subject
     </select>
 
     <delete id="deleteSubjectById" parameterType="int">
-        DELETE FROM t_penguin_subject
+        DELETE FROM  subject
         where id = #{id}
     </delete>
 </mapper>

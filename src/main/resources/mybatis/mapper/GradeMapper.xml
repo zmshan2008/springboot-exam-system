@@ -19,7 +19,7 @@
     </sql>
 
     <insert id="insertGrade" parameterType="com.demo.model.Grade" >
-        insert into t_penguin_grade
+        insert into  grade
         (student_id, contest_id, result, auto_result, manul_result,
         answer_json)
         values (#{grade.studentId}, #{grade.contestId}, #{grade.result},
@@ -27,12 +27,12 @@
     </insert>
 
     <delete id="deleteGrade" parameterType="int">
-        DELETE FROM t_penguin_grade
+        DELETE FROM  grade
         where id = #{id}
     </delete>
 
     <update id="updateGradeById" parameterType="com.demo.model.Grade">
-        UPDATE t_penguin_grade
+        UPDATE  grade
         SET
         result = #{grade.result}, manul_result = #{grade.manulResult},
         finish_time = #{grade.finishTime}, state = #{grade.state}
@@ -43,28 +43,28 @@
     <select id="getGradeById" resultMap="BaseResultMap" parameterType="int" >
         SELECT
         *
-        FROM t_penguin_grade
+        FROM  grade
         WHERE id = #{id}
     </select>
 
     <select id="getCountByStudentId" resultType="int" >
         SELECT
         COUNT(1)
-        FROM t_penguin_grade
+        FROM  grade
         WHERE state = 1 AND student_id = #{studentId}
     </select>
 
     <select id="getGradesByStudentId" resultMap="BaseResultMap" >
         SELECT
         *
-        FROM t_penguin_grade
+        FROM  grade
         WHERE state = 1 AND student_id = #{studentId}
     </select>
 
     <select id="getGradesByContestId" resultMap="BaseResultMap" >
         SELECT
         *
-        FROM t_penguin_grade
+        FROM  grade
         WHERE contest_id = #{contestId}
         ORDER BY student_id ASC
     </select>

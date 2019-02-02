@@ -18,13 +18,13 @@
     </sql>
 
     <insert id="insertPost" parameterType="com.demo.model.Post" >
-        insert into t_penguin_post
+        insert into  post
         (author_id, title, html_content, text_content)
         values (#{post.authorId}, #{post.title}, #{post.htmlContent}, #{post.textContent})
     </insert>
 
     <update id="updatePostById" parameterType="com.demo.model.Post">
-        UPDATE t_penguin_post
+        UPDATE  post
         SET
           title = #{title}, html_content = #{post.htmlContent}, text_content = #{post.textContent}
         WHERE
@@ -34,30 +34,30 @@
     <select id="getPostById" resultMap="BaseResultMap" parameterType="int" >
         SELECT
         *
-        FROM t_penguin_post
+        FROM  post
         WHERE id = #{id}
     </select>
 
     <delete id="deletePostById" parameterType="int" >
-        delete from t_penguin_post
+        delete from  post
         where id = #{id}
     </delete>
 
     <select id="getCount" resultType="int">
         SELECT
         COUNT(1)
-        FROM t_penguin_post
+        FROM  post
     </select>
 
     <select id="getPosts" resultMap="BaseResultMap" >
         SELECT
         *
-        FROM t_penguin_post
+        FROM  post
         ORDER BY last_reply_time DESC, update_time DESC, create_time DESC
     </select>
 
     <update id="updateReplyNumById">
-        UPDATE t_penguin_post
+        UPDATE  post
         SET
          reply_num = reply_num + 1, last_reply_time = #{lastReplyTime}
         WHERE
@@ -67,14 +67,14 @@
     <select id="getCountByAuthorId" resultType="int">
         SELECT
         COUNT(1)
-        FROM t_penguin_post
+        FROM  post
         WHERE author_id = #{authorId}
     </select>
 
     <select id="getPostsByAuthorId" resultMap="BaseResultMap" >
         SELECT
         *
-        FROM t_penguin_post
+        FROM  post
         WHERE author_id = #{authorId}
         ORDER BY last_reply_time DESC, update_time DESC, create_time DESC
     </select>
