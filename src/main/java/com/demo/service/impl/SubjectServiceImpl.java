@@ -1,5 +1,6 @@
 package com.demo.service.impl;
 
+import com.demo.util.GsonUtil;
 import com.github.pagehelper.PageHelper;
 import com.demo.common.ConstDatas;
 import com.demo.dao.SubjectMapper;
@@ -10,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.Jedis;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +25,8 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Autowired
     private SubjectMapper subjectMapper;
+    @Autowired
+    private Jedis jedis;
 
     @Override
     public int addSubject(Subject subject) {
@@ -45,33 +49,34 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public Map<String, Object> getSubjects(int pageNum, int pageSize) {
-        Map<String, Object> data = new HashMap<>();
-        int count = subjectMapper.getCount();
-        if (count == 0) {
-            data.put("pageNum", 0);
-            data.put("pageSize", 0);
-            data.put("totalPageNum", 1);
-            data.put("totalPageSize", 0);
-            data.put("subjects", new ArrayList<>());
-            return data;
-        }
-        int totalPageNum = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
-        if (pageNum > totalPageNum) {
-            data.put("pageNum", 0);
-            data.put("pageSize", 0);
+            Map<String, Object> data = new HashMap<>();
+            int count = subjectMapper.getCount();
+            if (count == 0) {
+                data.put("pageNum", 0);
+                data.put("pageSize", 0);
+                data.put("totalPageNum", 1);
+                data.put("totalPageSize", 0);
+                data.put("subjects", new ArrayList<>());
+                return data;
+            }
+            int totalPageNum = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
+            if (pageNum > totalPageNum) {
+                data.put("pageNum", 0);
+                data.put("pageSize", 0);
+                data.put("totalPageNum", totalPageNum);
+                data.put("totalPageSize", 0);
+                data.put("subjects", new ArrayList<>());
+                return data;
+            }
+            PageHelper.startPage(pageNum, pageSize);
+            List<Subject> subjects = subjectMapper.getSubjects();
+            data.put("pageNum", pageNum);
+            data.put("pageSize", pageSize);
             data.put("totalPageNum", totalPageNum);
-            data.put("totalPageSize", 0);
-            data.put("subjects", new ArrayList<>());
+            data.put("totalPageSize", count);
+            data.put("subjects", subjects);
+            jedis.set("subjects",GsonUtil.objectTojson(data));
             return data;
-        }
-        PageHelper.startPage(pageNum, pageSize);
-        List<Subject> subjects = subjectMapper.getSubjects();
-        data.put("pageNum", pageNum);
-        data.put("pageSize", pageSize);
-        data.put("totalPageNum", totalPageNum);
-        data.put("totalPageSize", count);
-        data.put("subjects", subjects);
-        return data;
     }
 
     @Override

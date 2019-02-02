@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RestController
 @RequestMapping(value = "/grade")
@@ -33,19 +34,19 @@ public class GradeController {
     public CommonResult submitContest(HttpServletRequest request, @RequestBody Grade grade,Account currentAccount) {
         CommonResult commonResult = new CommonResult();
         List<String> answerStrs = Arrays.asList(grade.getAnswerJson().split(ConstDatas.SPLIT_CHAR));
-        int autoResult = 0;
+        AtomicInteger autoResult = new AtomicInteger(0);
         List<Question> questions = questionService.getQuestionsByContestId(grade.getContestId());
 
         for (int i = 0; i < questions.size(); i++) {
             Question question = questions.get(i);
             if (question.getQuestionType() <= 1 && question.getAnswer()
                     .equals(answerStrs.get(i))) {
-                autoResult += question.getScore();
+                autoResult.getAndAdd(question.getScore());
             }
         }
         grade.setStudentId(currentAccount.getId());
-        grade.setResult(autoResult);
-        grade.setAutoResult(autoResult);
+        grade.setResult(autoResult.intValue());
+        grade.setAutoResult(autoResult.intValue());
         grade.setManulResult(0);
         int gradeId = gradeService.addGrade(grade);
         return new CommonResult();

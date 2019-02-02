@@ -1,5 +1,6 @@
 package com.demo.service.impl;
 
+import com.demo.util.GsonUtil;
 import com.github.pagehelper.PageHelper;
 import com.demo.dao.ContestMapper;
 import com.demo.dao.QuestionMapper;
@@ -8,10 +9,12 @@ import com.demo.model.Contest;
 import com.demo.model.Question;
 import com.demo.model.Subject;
 import com.demo.service.QuestionService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.Jedis;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +32,8 @@ public class QuestionServiceImpl implements QuestionService {
     private ContestMapper contestMapper;
     @Autowired
     private SubjectMapper subjectMapper;
+    @Autowired
+    private Jedis jedis;
 
     @Override
     public int addQuestion(Question question) {
@@ -60,7 +65,15 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public List<Question> getQuestionsByContestId(int contestId) {
-        return questionMapper.getQuestionByContestId(contestId);
+        String json = jedis.hget("contests", String.valueOf(contestId));
+        List<Question> questions=null;
+        if (StringUtils.isNotEmpty(json)) {
+            questions = GsonUtil.jsonToList(json, Question.class);
+        }else {
+            questions=questionMapper.getQuestionByContestId(contestId);
+            jedis.hset("contests",String.valueOf(contestId),GsonUtil.objectTojson(questions));
+        }
+        return questions;
     }
 
     @Override

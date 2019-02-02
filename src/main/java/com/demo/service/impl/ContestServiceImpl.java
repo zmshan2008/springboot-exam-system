@@ -1,15 +1,19 @@
 package com.demo.service.impl;
 
 import com.demo.service.ContestService;
+import com.demo.util.GsonUtil;
 import com.github.pagehelper.PageHelper;
 import com.demo.dao.ContestMapper;
 import com.demo.dao.SubjectMapper;
 import com.demo.model.Contest;
 import com.demo.model.Subject;
+import com.google.gson.Gson;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.Jedis;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,7 +27,8 @@ public class ContestServiceImpl implements ContestService {
     private ContestMapper contestMapper;
     @Autowired
     private SubjectMapper subjectMapper;
-
+    @Autowired
+    private Jedis jedis;
     @Override
     public int addContest(Contest contest) {
         contest.setTotalScore(0);
@@ -43,40 +48,46 @@ public class ContestServiceImpl implements ContestService {
 
     @Override
     public Map<String, Object> getContests(int pageNum, int pageSize) {
-        Map<String, Object> data = new HashMap<>();
-        int count = contestMapper.getCount();
-        if (count == 0) {
-            data.put("pageNum", 0);
-            data.put("pageSize", 0);
-            data.put("totalPageNum", 1);
-            data.put("totalPageSize", 0);
-            data.put("contests", new ArrayList<>());
-            return data;
-        }
-        int totalPageNum = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
-        if (pageNum > totalPageNum) {
-            data.put("pageNum", 0);
-            data.put("pageSize", 0);
+        String json = jedis.get("subjects");
+        if (StringUtils.isNotEmpty(json)){
+            return GsonUtil.jsonToMaps(json);
+        }else {
+            Map<String, Object> data = new HashMap<>();
+            int count = contestMapper.getCount();
+            if (count == 0) {
+                data.put("pageNum", 0);
+                data.put("pageSize", 0);
+                data.put("totalPageNum", 1);
+                data.put("totalPageSize", 0);
+                data.put("contests", new ArrayList<>());
+                return data;
+            }
+            int totalPageNum = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
+            if (pageNum > totalPageNum) {
+                data.put("pageNum", 0);
+                data.put("pageSize", 0);
+                data.put("totalPageNum", totalPageNum);
+                data.put("totalPageSize", 0);
+                data.put("contests", new ArrayList<>());
+                return data;
+            }
+            List<Subject> subjects = subjectMapper.getSubjects();
+            PageHelper.startPage(pageNum, pageSize);
+            List<Contest> contests = contestMapper.getContests();
+            Map<Integer, String> subjectId2name = subjects.stream().
+                    collect(Collectors.toMap(Subject::getId, Subject::getName));
+            for (Contest contest : contests) {
+                contest.setSubjectName(subjectId2name.
+                        getOrDefault(contest.getSubjectId(), "未知科目"));
+            }
+            data.put("pageNum", pageNum);
+            data.put("pageSize", pageSize);
             data.put("totalPageNum", totalPageNum);
-            data.put("totalPageSize", 0);
-            data.put("contests", new ArrayList<>());
+            data.put("totalPageSize", count);
+            data.put("contests", contests);
+            jedis.set("subjects", GsonUtil.objectTojson(data));
             return data;
         }
-        List<Subject> subjects = subjectMapper.getSubjects();
-        PageHelper.startPage(pageNum, pageSize);
-        List<Contest> contests = contestMapper.getContests();
-        Map<Integer, String> subjectId2name = subjects.stream().
-                collect(Collectors.toMap(Subject::getId, Subject::getName));
-        for (Contest contest : contests) {
-            contest.setSubjectName(subjectId2name.
-                    getOrDefault(contest.getSubjectId(), "未知科目"));
-        }
-        data.put("pageNum", pageNum);
-        data.put("pageSize", pageSize);
-        data.put("totalPageNum", totalPageNum);
-        data.put("totalPageSize", count);
-        data.put("contests", contests);
-        return data;
     }
 
     @Override

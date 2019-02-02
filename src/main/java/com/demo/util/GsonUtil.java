@@ -1,8 +1,12 @@
 package com.demo.util;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -49,15 +53,17 @@ public class GsonUtil {
     /**
      * 转成list
      *
-     * @param gsonString
-     * @param cls
+     * @param json
+     * @param t
      * @return
      */
-    public static <T> List<T> jsonToList(String gsonString, Class<T> cls) {
-        List<T> list = null;
-        if (gson != null) {
-            list = gson.fromJson(gsonString, new TypeToken<List<T>>() {
-            }.getType());
+    public static <T> List<T> jsonToList(String json, Class<T> t) {
+        List<T> list = new ArrayList<>();
+        JsonParser parser = new JsonParser();
+        JsonArray jsonarray = parser.parse(json).getAsJsonArray();
+        for (JsonElement element : jsonarray
+        ) {
+            list.add(gson.fromJson(element, t));
         }
         return list;
     }

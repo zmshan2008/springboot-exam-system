@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Controller
@@ -78,7 +79,7 @@ public class DefaultController {
         for (Question question : questions) {
             question.setAnswer("");
         }
-        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> data = new ConcurrentHashMap<>();
         data.put("contest", contest);
         data.put("questions", questions);
         model.addAttribute(ConstDatas.DATA, data);
@@ -91,7 +92,6 @@ public class DefaultController {
     @GetMapping(value="/problemset/list")
     public String problemSet(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int page, Model model,Account currentAccount) {
         Map<String, Object> data = subjectService.getSubjects(page, ConstDatas.subjectPageSize);
-
         model.addAttribute(ConstDatas.CURRENT_ACCOUNT, currentAccount);
         model.addAttribute(ConstDatas.DATA, data);
         return "/problem/problemset";

@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import java.util.List;
 
 @Configuration
-public class QexzWebMvcConfigurerAdapter extends WebMvcConfigurerAdapter {
+public class DemoWebMvcConfigurerAdapter extends WebMvcConfigurerAdapter {
 
 
     @Autowired
