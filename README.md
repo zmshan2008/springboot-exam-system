@@ -1,5 +1,5 @@
 # 学生自助考试系统
-后端技术栈： springmvc+springboot+mybatis+redis
+后端技术栈： springmvc+springboot+mysql+mybatis+redis
 主要功能
 
 前端展示 在前端页面上显示数据库中的数据，如考试，考试题目，题库，讨论区帖子，个人信息等等。
