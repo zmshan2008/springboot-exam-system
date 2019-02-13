@@ -1,6 +1,6 @@
 package com.demo.service.impl;
 
-import com.demo.util.GsonUtil;
+import com.demo.util.FastJsonUtils;
 import com.github.pagehelper.PageHelper;
 import com.demo.dao.ContestMapper;
 import com.demo.dao.QuestionMapper;
@@ -37,6 +37,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public int addQuestion(Question question) {
+        jedis.del("questions");
         if (question.getContestId() == 0) {
             question.setState(1);
         } else {
@@ -53,6 +54,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public boolean updateQuestion(Question question) {
+        jedis.del("questions");
         if (question.getContestId() != 0) {
             Contest contest = contestMapper.getContestById(question.getContestId());
             Question sourceQuestion = questionMapper.getQuestionById(question.getId());
@@ -65,13 +67,13 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public List<Question> getQuestionsByContestId(int contestId) {
-        String json = jedis.hget("contests", String.valueOf(contestId));
+        String json = jedis.hget("questions", String.valueOf(contestId));
         List<Question> questions=null;
         if (StringUtils.isNotEmpty(json)) {
-            questions = GsonUtil.jsonToList(json, Question.class);
+            questions = FastJsonUtils.getJsonToList(json,Question.class);
         }else {
             questions=questionMapper.getQuestionByContestId(contestId);
-            jedis.hset("contests",String.valueOf(contestId),GsonUtil.objectTojson(questions));
+            jedis.hset("questions",String.valueOf(contestId), FastJsonUtils.getBeanToJson(questions));
         }
         return questions;
     }
@@ -112,6 +114,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public boolean deleteQuestion(int id) {
+        jedis.del("questions");
         return questionMapper.deleteQuestion(id) > 0;
     }
 
@@ -161,6 +164,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public boolean updateQuestionsStateByContestId(int contestId, int state) {
+        jedis.del("questions");
         return questionMapper.updateQuestionsStateByContestId(contestId, state) > 0;
     }
 }

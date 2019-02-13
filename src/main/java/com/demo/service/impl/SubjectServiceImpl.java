@@ -1,6 +1,5 @@
 package com.demo.service.impl;
 
-import com.demo.util.GsonUtil;
 import com.github.pagehelper.PageHelper;
 import com.demo.common.ConstDatas;
 import com.demo.dao.SubjectMapper;
@@ -75,7 +74,6 @@ public class SubjectServiceImpl implements SubjectService {
             data.put("totalPageNum", totalPageNum);
             data.put("totalPageSize", count);
             data.put("subjects", subjects);
-            jedis.set("subjects",GsonUtil.objectTojson(data));
             return data;
     }
 

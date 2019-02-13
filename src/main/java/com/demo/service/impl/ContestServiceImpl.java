@@ -1,13 +1,12 @@
 package com.demo.service.impl;
 
 import com.demo.service.ContestService;
-import com.demo.util.GsonUtil;
+import com.demo.util.FastJsonUtils;
 import com.github.pagehelper.PageHelper;
 import com.demo.dao.ContestMapper;
 import com.demo.dao.SubjectMapper;
 import com.demo.model.Contest;
 import com.demo.model.Subject;
-import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,11 +32,13 @@ public class ContestServiceImpl implements ContestService {
     public int addContest(Contest contest) {
         contest.setTotalScore(0);
         contest.setState(0);
+        jedis.del("contests");
         return contestMapper.insertContest(contest);
     }
 
     @Override
     public boolean updateContest(Contest contest) {
+        jedis.del("contests");
         return contestMapper.updateContestById(contest) > 0;
     }
 
@@ -48,9 +49,9 @@ public class ContestServiceImpl implements ContestService {
 
     @Override
     public Map<String, Object> getContests(int pageNum, int pageSize) {
-        String json = jedis.get("subjects");
+        String json = jedis.get("contests");
         if (StringUtils.isNotEmpty(json)){
-            return GsonUtil.jsonToMaps(json);
+            return FastJsonUtils.getJsonToBean(json,HashMap.class);
         }else {
             Map<String, Object> data = new HashMap<>();
             int count = contestMapper.getCount();
@@ -85,13 +86,14 @@ public class ContestServiceImpl implements ContestService {
             data.put("totalPageNum", totalPageNum);
             data.put("totalPageSize", count);
             data.put("contests", contests);
-            jedis.set("subjects", GsonUtil.objectTojson(data));
+            jedis.set("contests", FastJsonUtils.getBeanToJson(data));
             return data;
         }
     }
 
     @Override
     public boolean deleteContest(int id) {
+        jedis.del("contests");
         return contestMapper.deleteContest(id) > 0;
     }
 
